@@ -7,10 +7,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: ProductsScreen(
-        title: "Все товары",
-        categoryId: -1,
-      ),
+      home: ProductsScreen(),
       title: "Интернет магазин",
       color: Colors.blue,
     );

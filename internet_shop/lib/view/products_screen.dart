@@ -1,65 +1,88 @@
 import 'package:flutter/material.dart';
 import 'package:internet_shop/model/product.dart';
+import 'package:internet_shop/model_api/product_api.dart';
 import 'package:internet_shop/view/catalog_screen.dart';
-import 'package:internet_shop/api/product_api.dart';
 
 class ProductsScreen extends StatefulWidget {
   final String title;
-  final int categoryId;
+  final int? categoryId;
 
-  ProductsScreen({Key? key, required this.title, required this.categoryId})
-      : super(key: key);
+  ProductsScreen({
+    Key? key,
+    this.title = "Все товары",
+    this.categoryId,
+  }) : super(
+          key: key,
+        );
 
   @override
-  ProductsScreenState createState() =>
-      ProductsScreenState(this.title, this.categoryId);
+  ProductsScreenState createState() => ProductsScreenState();
 }
 
 class ProductsScreenState extends State<ProductsScreen> {
   late ScrollController controller;
   late Future<List<Product>> futureProducts;
-  final String title;
-  final int categoryId;
 
-  ProductsScreenState(this.title, this.categoryId);
+  final List<Product> _products = [];
+
   @override
   void initState() {
     super.initState();
-    if (categoryId == -1) {
-      futureProducts = ProductApi.fetchProducts();
-    } else {
-      futureProducts =
-          ProductApi.fetchProductsCategory('categoryId', categoryId);
-    }
+    // if (widget.categoryId == null) {
+    //   futureProducts = ProductApi.fetchProducts(
+    //     categoryId: widget.categoryId,
+    //   );
+    // }
+    loadProducts();
+  }
+
+  Future<void> loadProducts() async {
+    //TODO: await ProductApi.fetchProducts(offset: _products.length)
+    var newProducts = await ProductApi.fetchProducts(
+      categoryId: widget.categoryId,
+    );
+    setState(() {
+      _products.addAll(newProducts);
+    });
+  }
+
+  PreferredSizeWidget buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Text(widget.title),
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        fontSize: 12,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        centerTitle: true,
-        titleTextStyle: TextStyle(
-          fontSize: 12,
-        ),
-      ),
+      appBar: buildAppBar(context),
+      //TODO: extract to buildBody
       body: FutureBuilder<List<Product>>(
+        //TODO: remove FutureBuilder
         future: futureProducts,
         builder: (context, snapshotProducts) {
           if (snapshotProducts.hasData) {
+            //TODO: add infinity scroll support, call loadProducts
             return ListView.builder(
+              //TODO: use _products
               itemCount: snapshotProducts.data!.length,
               itemBuilder: (context, index) {
+                //TODO: use _products
+                var product = snapshotProducts.data![index];
+                //TODO: buildProductListItem or extract to StatelessWidget ProductListItem(product)
                 return ListTile(
                   leading: Expanded(
                     child: Image.network(
-                      snapshotProducts.data![index].imageUrl,
+                      product.imageUrl,
                       width: 100,
                     ),
                   ),
-                  title: Text(snapshotProducts.data![index].title),
-                  subtitle: Text(
-                      snapshotProducts.data![index].price.toString() + ' ₽'),
+                  title: Text(product.title),
+                  subtitle: Text(product.price.toString() + ' ₽'),
                 );
               },
             );
@@ -68,6 +91,7 @@ class ProductsScreenState extends State<ProductsScreen> {
           }
         },
       ),
+      //TODO: buildFloatingButton
       floatingActionButton: SizedBox(
         width: 70,
         height: 70,

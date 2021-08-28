@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:internet_shop/api/category_api.dart';
+import 'package:internet_shop/model_api/category_api.dart';
 import 'package:internet_shop/model/category.dart';
 import 'package:internet_shop/view/products_screen.dart';
 
@@ -19,6 +19,7 @@ class _CatalogState extends State<CatalogScreen> {
     futureCategories = CategoryApi.fetchCategories();
   }
 
+  //TODO: update building, separate tree
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +53,7 @@ class _CatalogState extends State<CatalogScreen> {
                       ),
                     );
                   },
+                  //TODO: extract to CategoryGridItem(category) : StatelessWidget
                   child: Column(
                     children: <Widget>[
                       Expanded(

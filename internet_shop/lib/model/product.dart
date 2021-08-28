@@ -16,4 +16,6 @@ class Product {
       imageUrl: json['imageUrl'],
     );
   }
+
+  //https://www.notion.so/whitetigersoft/JSON-1a338ec1b8d1494b869d68fbef8a06bd
 }
