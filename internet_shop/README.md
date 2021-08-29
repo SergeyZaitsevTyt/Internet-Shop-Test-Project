@@ -1,6 +1,6 @@
 # internet_shop
 
-A new Flutter project.
+Test Flutter project.
 
 ## Getting Started
 
