@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:internet_shop/model/product.dart';
 import 'package:internet_shop/model_api/product_api.dart';
 import 'package:internet_shop/screen/catalog_screen.dart';
+import 'package:internet_shop/screen/products_screen_list_item.dart';
 
 class ProductsScreen extends StatefulWidget {
   final String titleAppBar;
@@ -11,32 +12,50 @@ class ProductsScreen extends StatefulWidget {
     Key? key,
     this.titleAppBar = "Все товары",
     this.categoryId,
-  }) : super(
-          key: key,
-        );
+  }) : super(key: key);
 
   @override
-  ProductsScreenState createState() => ProductsScreenState();
+  _ProductsScreenState createState() => _ProductsScreenState();
 }
 
-class ProductsScreenState extends State<ProductsScreen> {
+class _ProductsScreenState extends State<ProductsScreen> {
   final List<Product> products = [];
 
-//late ScrollController controller;
+  late ScrollController controller = new ScrollController();
 
   @override
   void initState() {
     super.initState();
     loadProducts();
+    controller.addListener(_scrollListener);
   }
 
   Future<void> loadProducts() async {
-    var newProducts = await ProductApi.fetchProducts(
-        params: {'offset': products.length, 'categoryId': widget.categoryId});
+    const numElemForShow = 7;
+    Map<String, dynamic> params = {'offset': products.length.toString()};
+    if (widget.categoryId != null) {
+      params.addAll({'categoryId': widget.categoryId.toString()});
+    }
+    List<Product> newProducts = await ProductApi.fetchProducts(params);
     setState(
       () {
-        products.addAll(newProducts);
+        if (newProducts.length > numElemForShow) {
+          products.addAll(newProducts.sublist(0, numElemForShow - 1));
+        } else {
+          products.addAll(newProducts);
+        }
       },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: buildAppBar(context),
+      body: buildBody(context),
+      floatingActionButton: buildFloatingActionButton(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      backgroundColor: Colors.tealAccent,
     );
   }
 
@@ -51,22 +70,12 @@ class ProductsScreenState extends State<ProductsScreen> {
   }
 
   Widget buildBody(BuildContext context) {
-    //TODO: add infinity scroll support, call loadProducts
     return ListView.builder(
       itemCount: products.length,
+      controller: controller,
       itemBuilder: (context, index) {
-        var product = products[index];
-        //TODO: buildProductListItem or extract to StatelessWidget ProductListItem(product)
-        return ListTile(
-          leading: Expanded(
-            child: Image.network(
-              product.imageUrl,
-              width: 100,
-            ),
-          ),
-          title: Text(product.title),
-          subtitle: Text(product.price.toString() + ' ₽'),
-        );
+        Product product = products[index];
+        return ProductListItem(product: product);
       },
     );
   }
@@ -85,14 +94,11 @@ class ProductsScreenState extends State<ProductsScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(context),
-      body: buildBody(context),
-      floatingActionButton: buildFloatingActionButton(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      backgroundColor: Colors.tealAccent,
-    );
+  void _scrollListener() {
+    if (controller.position.atEdge) {
+      setState(() {
+        loadProducts();
+      });
+    }
   }
 }

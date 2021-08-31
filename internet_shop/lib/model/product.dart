@@ -1,21 +1,22 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'product.g.dart';
+
+@JsonSerializable()
 class Product {
-  final String title;
-  final int price;
-  final String imageUrl;
+  String title;
+  int price;
+  String imageUrl;
 
-  Product({
-    required this.title,
-    required this.price,
-    required this.imageUrl,
-  });
+  Product(
+    this.title,
+    this.price,
+    this.imageUrl,
+  );
 
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      title: json['title'],
-      price: json['price'],
-      imageUrl: json['imageUrl'],
-    );
-  }
+  factory Product.fromJson(Map<String, dynamic> json) =>
+      _$ProductFromJson(json);
 
-  //https://www.notion.so/whitetigersoft/JSON-1a338ec1b8d1494b869d68fbef8a06bd
+  Map<String, dynamic> toJson() => _$ProductToJson(this);
+//https://www.notion.so/whitetigersoft/JSON-1a338ec1b8d1494b869d68fbef8a06bd
 }
