@@ -6,8 +6,9 @@ import 'package:internet_shop/model/category.dart';
 import 'package:internet_shop/model_api/base_api.dart';
 
 class CategoryApi extends BaseApi {
+  //TODO: add optional parentCategoryId param
   static Future<List<Category>> fetchCategories() async {
-    Uri absCategoryUrl = BaseApi.doAbsUrl("/api/common/category/list", {});
+    Uri absCategoryUrl = BaseApi.doAbsUrl("/api/common/category/list");
     final response = await http.get(absCategoryUrl);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);

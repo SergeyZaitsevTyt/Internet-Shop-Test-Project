@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:internet_shop/model/category.dart';
 import 'package:internet_shop/model_api/category_api.dart';
-import 'package:internet_shop/screen/catalog_screen_grid_item.dart';
+import 'package:internet_shop/view/catalog_screen_grid_item.dart';
 import 'package:internet_shop/screen/products_screen.dart';
 
 class CatalogScreen extends StatefulWidget {
@@ -58,20 +58,23 @@ class _CatalogScreenState extends State<CatalogScreen> {
       itemBuilder: (context, index) {
         var category = categories[index];
         return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProductsScreen(
-                  titleAppBar: category.title,
-                  categoryId: category.categoryId,
-                ),
-              ),
-            );
-          },
+          onTap: () => onCategoryTap(category),
           child: CategoryGridItem(category: category),
         );
       },
+    );
+  }
+  
+  void onCategoryTap(Category category) {
+    //TODO: try check category.hasSubcategories. Open Catalog Screen for category with subcategories
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProductsScreen(
+          titleAppBar: category.title,
+          categoryId: category.categoryId,
+        ),
+      ),
     );
   }
 }

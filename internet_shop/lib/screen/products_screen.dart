@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:internet_shop/model/product.dart';
 import 'package:internet_shop/model_api/product_api.dart';
 import 'package:internet_shop/screen/catalog_screen.dart';
-import 'package:internet_shop/screen/products_screen_list_item.dart';
+import 'package:internet_shop/view/products_screen_list_item.dart';
 
 class ProductsScreen extends StatefulWidget {
   final String titleAppBar;
@@ -31,21 +31,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
   }
 
   Future<void> loadProducts() async {
-    const numElemForShow = 7;
-    Map<String, dynamic> params = {'offset': products.length.toString()};
-    if (widget.categoryId != null) {
-      params.addAll({'categoryId': widget.categoryId.toString()});
-    }
-    List<Product> newProducts = await ProductApi.fetchProducts(params);
-    setState(
-      () {
-        if (newProducts.length > numElemForShow) {
-          products.addAll(newProducts.sublist(0, numElemForShow - 1));
-        } else {
-          products.addAll(newProducts);
-        }
-      },
+    var newProducts = await ProductApi.fetchProducts(
+      offset: products.length,
+      categoryId: widget.categoryId,
     );
+    setState(() {
+      products.addAll(newProducts);
+    });
   }
 
   @override
@@ -96,9 +88,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
   void _scrollListener() {
     if (controller.position.atEdge) {
-      setState(() {
-        loadProducts();
-      });
+      loadProducts();
     }
   }
 }

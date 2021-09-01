@@ -6,10 +6,20 @@ import 'package:internet_shop/model/product.dart';
 import 'package:internet_shop/model_api/base_api.dart';
 
 class ProductApi extends BaseApi {
-  static Future<List<Product>> fetchProducts(
-      Map<String, dynamic> params) async {
-    Uri absProductUrl = BaseApi.doAbsUrl('/api/common/product/list', params);
-
+  static Future<List<Product>> fetchProducts({
+    int offset = 0,
+    int? categoryId,
+  }) async {
+    Map<String, dynamic> params = {
+      'offset': offset,
+    };
+    if (categoryId != null) {
+      params['categoryId'] = categoryId;
+    }
+    var absProductUrl = BaseApi.doAbsUrl(
+      '/api/common/product/list',
+      params: params,
+    );
     final response = await http.get(absProductUrl);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
