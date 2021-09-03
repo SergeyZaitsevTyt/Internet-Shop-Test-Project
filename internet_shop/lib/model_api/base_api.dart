@@ -1,5 +1,6 @@
 class BaseApi {
-  static Uri doAbsUrl(String unencodedPath, {
+  static Uri doAbsUrl(
+    String unencodedPath, {
     Map<String, dynamic> params = const {},
   }) {
     const appKey =

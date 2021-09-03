@@ -11,10 +11,10 @@ class ProductApi extends BaseApi {
     int? categoryId,
   }) async {
     Map<String, dynamic> params = {
-      'offset': offset,
+      'offset': offset.toString(),
     };
     if (categoryId != null) {
-      params['categoryId'] = categoryId;
+      params['categoryId'] = categoryId.toString();
     }
     var absProductUrl = BaseApi.doAbsUrl(
       '/api/common/product/list',

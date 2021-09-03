@@ -7,10 +7,14 @@ class Category {
   int categoryId;
   String title;
   String imageUrl;
+  int hasSubcategories;
 
-  Category(this.categoryId,
-      this.title,
-      this.imageUrl);
+  Category(
+    this.categoryId,
+    this.title,
+    this.imageUrl,
+    this.hasSubcategories,
+  );
 
   factory Category.fromJson(Map<String, dynamic> json) =>
       _$CategoryFromJson(json);
